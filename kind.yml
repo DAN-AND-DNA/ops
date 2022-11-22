@@ -1,0 +1,38 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+networking:
+   apiServerAddress: "127.0.0.1"
+nodes:
+- role: control-plane
+  extraPortMappings:
+  - containerPort: 80
+    hostPort: 80
+    protocol: TCP
+  - containerPort: 443
+    hostPort: 443
+    protocol: TCP
+  - containerPort: 3737
+    hostPort: 3737
+    protocol: TCP
+  kubeadmConfigPatches:
+  - |
+    kind: InitConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-labels: "ingress-ready=true"
+    localAPIEndpoint:
+      bindPort: 6443
+  - |
+    kind: ClusterConfiguration
+    imageRepository: registry.aliyuncs.com/google_containers
+    networking:
+      podSubnet: 10.244.0.0/16
+      serviceSubnet: 10.96.0.0/12
+  - |
+    kind: KubeProxyConfiguration
+    mode: ipvs
+  - |
+    kind: KubeletConfiguration
+    cgroupDriver: systemd
+- role: worker
+- role: worker

@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: danns
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: etcd-service
+  namespace: danns
+spec:
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 2379
+      targetPort: 2379
+      nodePort: 30737
+  selector:
+    app: etcd-service
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: etcd-service
+  namespace: danns
+  labels:
+    app: etcd-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: etcd-service
+  template:
+    metadata:
+      labels:
+        app: etcd-service
+    spec:
+      containers:
+      - name: etcd-inst
+        image:  bitnami/etcd:3.5.6
+        resources:
+          requests:
+            memory: "70M"
+            cpu: "70m"
+          limits:
+            memory: "500M"
+            cpu: "250m"
+        volumeMounts:
+        - name: etcd-storage
+          mountPath: /data/etcd
+        command: ["etcd"]
+        args:
+          - --name=node1
+          - --advertise-client-urls=http://0.0.0.0:2379
+          - --listen-client-urls=http://0.0.0.0:2379
+          - --initial-advertise-peer-urls=http://0.0.0.0:2380
+          - --listen-peer-urls=http://0.0.0.0:2380
+          - --initial-cluster=node1=http://0.0.0.0:2380
+          - --data-dir=/data/etcd
+          - --initial-cluster-state=new
+        ports:
+          - name: tcp
+            containerPort: 2379
+          - name: tcp-discovery
+            containerPort: 2380
+
+      volumes:
+        - name: etcd-storage
+          emptyDir:
+            medium: Memory

@@ -11,7 +11,7 @@ nodes:
   - containerPort: 443
     hostPort: 443
     protocol: TCP
-  - containerPort: 3737
+  - containerPort: 30737
     hostPort: 3737
     protocol: TCP
   kubeadmConfigPatches:

@@ -25,10 +25,19 @@ init_docker() {
                         "Soft": 300000
                 }
         },
-        "graph": "/data/docker_runtime"
+        "graph": "/home/dan/data/docker_runtime",
+        "hosts": ["tcp://0.0.0.0:2375", "unix:///var/run/docker.sock"]
 }
 EOF
 
+         mkdir -p /etc/systemd/system/docker.service.d
+        cat << EOF | tee /etc/systemd/system/docker.service.d/docker.conf
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd
+EOF
+
+        systemctl daemon-reload
         systemctl start docker
         systemctl enable docker
         systemctl enable containerd.service

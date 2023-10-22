@@ -4,16 +4,11 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+# 1. change the default storage path (修改默认存储位置)
+# 2. export the external tcp api entry (暴露对外tcp api入口)
 init_docker() {
-        yum install -y yum-utils
-        yum-config-manager \
-        --add-repo \
-        http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
-
-        yum install -y docker-ce docker-ce-cli containerd.io
-
-        mkdir -p /etc/docker
-        cat << EOF | tee /etc/docker/daemon.json
+        sudo mkdir -p /etc/docker
+        sudo cat << EOF | sudo tee /etc/docker/daemon.json
 {
         "storage-driver": "overlay2",
         "registry-mirrors" : ["https://reg-mirror.qiniu.com", "http://f1361db2.m.daoclound.io", "https://hub-mirror.c.163.com", "https://docker.mirrors.ustc.edu.cn", "https://registry.docker-cn.com"],
@@ -30,17 +25,17 @@ init_docker() {
 }
 EOF
 
-         mkdir -p /etc/systemd/system/docker.service.d
-        cat << EOF | tee /etc/systemd/system/docker.service.d/docker.conf
+        sudo mkdir -p /etc/systemd/system/docker.service.d
+        sudo cat << EOF | sudo tee /etc/systemd/system/docker.service.d/docker.conf
 [Service]
 ExecStart=
 ExecStart=/usr/bin/dockerd
 EOF
 
-        systemctl daemon-reload
-        systemctl start docker
-        systemctl enable docker
-        systemctl enable containerd.service
+        sudo systemctl daemon-reload
+        sudo systemctl start docker
+        sudo systemctl enable docker
+        sudo systemctl enable containerd.service
 }
 
 init_docker

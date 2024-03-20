@@ -1,0 +1,1 @@
+nohup tcpdump -i eth0 tcp and port 6379 -n -nn -v -vv -w cache -W 50 -C 100 -s 200 -Z root &

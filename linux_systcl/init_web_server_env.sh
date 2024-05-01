@@ -22,7 +22,7 @@ net.ipv4.ip_local_port_range=1024 65535
 net.ipv4.tcp_timestamps=1
 net.ipv4.tcp_tw_recycle=0
 net.ipv4.tcp_tw_reuse=1
-net.ipv4.tcp_fin_timeout=20
+net.ipv4.tcp_fin_timeout=10
 
 # TIME-WAIT状态的连接上限（主动断开）
 net.ipv4.tcp_max_tw_buckets=40000
@@ -42,6 +42,22 @@ net.core.somaxconn=10000
 
 # 不使用swap
 vm.swappiness=0
+
+# 建立连接后，丢包进行重发的次数，设置时间为大概25秒
+net.ipv4.tcp_retries2=7
+
+# lsmod | grep conntrack   如conntrack模块没启动就不生效
+#也可以修改net.netfilter.nf_conntrack_buckets的大小（桶和链表），但是sysctl不行
+net.nf_conntrack_max=1000000
+# 加速清理
+net.netfilter.nf_conntrack_icmp_timeout=20
+net.netfilter.nf_conntrack_tcp_timeout_syn_recv=20
+net.netfilter.nf_conntrack_tcp_timeout_syn_sent=20
+net.netfilter.nf_conntrack_tcp_timeout_established=600
+net.netfilter.nf_conntrack_tcp_timeout_fin_wait=20
+net.netfilter.nf_conntrack_tcp_timeout_time_wait=20
+net.netfilter.nf_conntrack_tcp_timeout_close_wait=20
+net.netfilter.nf_conntrack_tcp_timeout_last_ack=20
 
 EOF
 

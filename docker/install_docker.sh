@@ -33,8 +33,8 @@ install_docker_ubuntu() {
         "default-ulimits": {
                 "nofile": {
                         "Name": "nofile",
-                        "Hard": 3000001,
-                        "Soft": 3000000
+                        "Hard": 1000000,
+                        "Soft": 1000000
                 }
         }
 }
@@ -62,8 +62,8 @@ install_docker_centos() {
         "default-ulimits": {
                 "nofile": {
                         "Name": "nofile",
-                        "Hard": 3000001,
-                        "Soft": 3000000
+                        "Hard": 1000000,
+                        "Soft": 1000000
                 }
         }
 }
